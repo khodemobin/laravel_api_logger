@@ -3,6 +3,7 @@
 namespace KhodeMobin\LaravelApiLogger\Drivers;
 
 use KhodeMobin\LaravelApiLogger\Contracts\ApiLoggerInterface;
+use KhodeMobin\LaravelApiLogger\Jobs\InsertToDBJob;
 use KhodeMobin\LaravelApiLogger\Models\ApiLog;
 
 class Database extends BaseLoggerAbstract implements ApiLoggerInterface
@@ -33,6 +34,8 @@ class Database extends BaseLoggerAbstract implements ApiLoggerInterface
     public function save($request, $response)
     {
         $data = $this->logData($request, $response);
+
+        // InsertToDBJob::dispatch($this->logger, $data);
 
         $this->logger->fill($data);
 
