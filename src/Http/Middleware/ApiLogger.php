@@ -23,11 +23,7 @@ class ApiLogger
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-        return $response;
-    }
-
-    public function terminate($request, $response)
-    {
         $this->logger->save($request, $response);
+        return $response;
     }
 }

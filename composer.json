@@ -9,6 +9,14 @@
         "email": "mobinyazdanparast9@gmail.com"
     }],
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+        "whichbrowser/parser": "^2.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "KhodeMobin\\LaravelApiLogger\\Providers\\LaravelApiLoggerServiceProvider"
+            ]
+        }
     }
 }

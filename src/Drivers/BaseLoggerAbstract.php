@@ -7,9 +7,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use UserAgentParser\Provider\WhichBrowser;
 use KhodeMobin\LaravelApiLogger\Models\ApiLog;
-use UserAgentParser\Exception\NoResultFoundException;
+
 
 abstract class BaseLoggerAbstract
 {
@@ -74,37 +73,45 @@ abstract class BaseLoggerAbstract
 
         $implode_models = $this->models;
 
-        array_walk($implode_models, function (&$value, $key) {
-            $value = "{$key} ({$value})";
-        });
+        // try {
+        //     $provider = new WhichBrowser();
+        //     $result = $provider->parse($request->header('User-Agent'));
+        //     $this->logs['device'] = $result->getDevice()->getBrand() == null ? "" : $result->getDevice()->getModel() . "-" . $result->getDevice()->getModel() == null ? "" : $result->getDevice()->getModel();
+        //     $this->logs['platform_version'] = $result->getOperatingSystem()->getVersion()->getComplete();
+        //     $this->logs['platform'] = $result->getOperatingSystem()->getName();
+        //     $this->logs['browser'] = $result->getBrowser()->getName();
+        //     $this->logs['browser_version'] = $result->getBrowser()->getVersion()->getComplete();
 
-
+        //     $result->getRenderingEngine()->getName();
+        // } catch (NoResultFoundException $ex) {
+        //     // nothing found
+        // }
         $models = implode(', ', $implode_models);
         $this->logs['created_at'] = Carbon::now();
         $this->logs['method'] = $request->method();
         $this->logs['url'] = $request->path();
         $this->logs['payload'] = json_encode($request->all());
-        $this->logs['response'] = $response->status();
+        $this->logs['response'] = $response;
         $this->logs['duration'] = number_format($endTime - LARAVEL_START, 3);
         $this->logs['controller'] = $controller;
         $this->logs['action'] = $action;
         $this->logs['models'] = $models;
         $this->logs['ip'] = $request->ip();
         $this->logs['real_ip'] = $this->getIp();
-        $this->logs['log'] = $this->createRequestLog();
-        try {
-            $provider = new WhichBrowser();
-            $result = $provider->parse($request->header('User-Agent'));
-            $this->logs['device'] = $result->getDevice()->getBrand() == null ? "" : $result->getDevice()->getModel() . "-" . $result->getDevice()->getModel() == null ? "" : $result->getDevice()->getModel();
-            $this->logs['platform_version'] = $result->getOperatingSystem()->getVersion()->getComplete();
-            $this->logs['platform'] = $result->getOperatingSystem()->getName();
-            $this->logs['browser'] = $result->getBrowser()->getName();
-            $this->logs['browser_version'] = $result->getBrowser()->getVersion()->getComplete();
+        $this->logs['log'] = json_encode($this->createRequestLog());
+        // try {
+        //     $provider = new WhichBrowser();
+        //     $result = $provider->parse($request->header('User-Agent'));
+        //     $this->logs['device'] = $result->getDevice()->getBrand() == null ? "" : $result->getDevice()->getModel() . "-" . $result->getDevice()->getModel() == null ? "" : $result->getDevice()->getModel();
+        //     $this->logs['platform_version'] = $result->getOperatingSystem()->getVersion()->getComplete();
+        //     $this->logs['platform'] = $result->getOperatingSystem()->getName();
+        //     $this->logs['browser'] = $result->getBrowser()->getName();
+        //     $this->logs['browser_version'] = $result->getBrowser()->getVersion()->getComplete();
 
-            $result->getRenderingEngine()->getName();
-        } catch (NoResultFoundException $ex) {
-            // nothing found
-        }
+        //     $result->getRenderingEngine()->getName();
+        // } catch (NoResultFoundException $ex) {
+        //     // nothing found
+        // }
 
         return $this->logs;
     }

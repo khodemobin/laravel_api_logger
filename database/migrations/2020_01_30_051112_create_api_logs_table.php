@@ -13,7 +13,7 @@ class CreateApiLogsTable extends Migration
      */
     public function up()
     {
-        Schema::connection(config('apilog.connection'))::create('api_logs', function (Blueprint $table) {
+        Schema::connection(config('apilog.connection'))->create('api_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('method');
             $table->string('url');
