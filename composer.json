@@ -9,6 +9,6 @@
         "email": "mobinyazdanparast9@gmail.com"
     }],
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.0"
     }
 }
