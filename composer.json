@@ -1,0 +1,17 @@
+{
+    "name": "khodemobin/laravel_api_logger",
+    "description": "Laravel package for api logs which can be used in debugging.",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "authors": [{
+        "name": "mobin",
+        "email": "mobinyazdanparast9@gmail.com"
+    }],
+    "require": {
+        "php": "^7.0",
+        "illuminate/http": "~5.5.0",
+        "illuminate/support": "~5.5.0",
+        "whichbrowser/parser": "^2.0"
+    }
+}
