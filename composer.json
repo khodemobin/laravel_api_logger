@@ -20,7 +20,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "KhodeMobin\\LaravelApiLogger\\Providers\\LaravelApiLoggerServiceProvider"
+                "LaravelApiLogger\\Providers\\LaravelApiLoggerServiceProvider"
             ]
         }
     }
