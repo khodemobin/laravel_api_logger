@@ -1,5 +1,5 @@
 {
-    "name": "khodemobin/laravel_api_logger",
+    "name": "laravel_api_logger",
     "description": "Laravel package for api logs which can be used in debugging.",
     "type": "library",
     "license": "MIT",
@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelApiLogger\\": [ "src/"]
+            "LaravelApiLogger\\": "src/"
         }
     },
     "extra": {
