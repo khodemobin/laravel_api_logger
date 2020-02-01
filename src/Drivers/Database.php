@@ -4,6 +4,7 @@ namespace LaravelApiLogger\Drivers;
 
 use LaravelApiLogger\Contracts\ApiLoggerInterface;
 use LaravelApiLogger\Models\ApiLog;
+use UserAgentParser\Exception\PackageNotLoadedException;
 
 class Database extends BaseLoggerAbstract implements ApiLoggerInterface
 {
@@ -15,20 +16,30 @@ class Database extends BaseLoggerAbstract implements ApiLoggerInterface
      */
     protected $logger;
 
+    /**
+     * Database constructor.
+     * @param ApiLog $logger
+     */
     public function __construct(ApiLog $logger)
     {
         parent::__construct();
         $this->logger = $logger;
     }
+
     /**
      * return all models
+     * @return array
      */
-    public function get()
+    public function get(): array
     {
         return $this->logger->all();
     }
+
     /**
      * save logs in database
+     * @param $request
+     * @param $response
+     * @throws PackageNotLoadedException
      */
     public function save($request, $response)
     {
@@ -38,12 +49,17 @@ class Database extends BaseLoggerAbstract implements ApiLoggerInterface
 
         $this->logger->save();
     }
+
     /**
      * delete all logs
+     * @param $id
      */
     public function delete($id)
     {
-        $this->logger->truncate();
+        $log = ApiLog::find($id);
+        if ($log) {
+            $log->delete();
+        }
     }
 
     public function deleteAll()

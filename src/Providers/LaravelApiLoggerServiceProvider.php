@@ -4,8 +4,6 @@ namespace LaravelApiLogger\Providers;
 
 use Exception;
 use Illuminate\Support\ServiceProvider;
-use LaravelApiLogger\Drivers\File;
-use LaravelApiLogger\Drivers\Redis;
 use LaravelApiLogger\Drivers\Database;
 use LaravelApiLogger\Http\Middleware\ApiLogger;
 use LaravelApiLogger\Contracts\ApiLoggerInterface;
