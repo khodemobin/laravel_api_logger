@@ -1,6 +1,6 @@
 <?php
 
-namespace KhodeMobin\LaravelApiLogger\Http\Controllers;
+namespace LaravelApiLogger\Http\Controllers;
 
 class ApiLogController
 {

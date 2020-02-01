@@ -1,9 +1,9 @@
 <?php
 
-namespace KhodeMobin\LaravelApiLogger\Drivers;
+namespace LaravelApiLogger\Drivers;
 
-use KhodeMobin\LaravelApiLogger\Contracts\ApiLoggerInterface;
-use KhodeMobin\LaravelApiLogger\Models\ApiLog;
+use LaravelApiLogger\Contracts\ApiLoggerInterface;
+use LaravelApiLogger\Models\ApiLog;
 use Illuminate\Support\Facades\File as FileFacade;
 
 class File extends BaseLoggerAbstract implements ApiLoggerInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace KhodeMobin\LaravelApiLogger\Contracts;
+namespace LaravelApiLogger\Contracts;
 
 interface ApiLoggerInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace KhodeMobin\LaravelApiLogger\Models;
+namespace LaravelApiLogger\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

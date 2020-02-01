@@ -1,16 +1,16 @@
 <?php
 
-namespace KhodeMobin\LaravelApiLogger\Providers;
+namespace LaravelApiLogger\Providers;
 
 use Exception;
 use Illuminate\Support\ServiceProvider;
-use KhodeMobin\LaravelApiLogger\Drivers\File;
-use KhodeMobin\LaravelApiLogger\Drivers\Redis;
-use KhodeMobin\LaravelApiLogger\Drivers\Database;
-use KhodeMobin\LaravelApiLogger\Http\Middleware\ApiLogger;
-use KhodeMobin\LaravelApiLogger\Contracts\ApiLoggerInterface;
-use KhodeMobin\LaravelApiLogger\Console\Commands\GetLogs;
-use KhodeMobin\LaravelApiLogger\Console\Commands\ClearLogs;
+use LaravelApiLogger\Drivers\File;
+use LaravelApiLogger\Drivers\Redis;
+use LaravelApiLogger\Drivers\Database;
+use LaravelApiLogger\Http\Middleware\ApiLogger;
+use LaravelApiLogger\Contracts\ApiLoggerInterface;
+use LaravelApiLogger\Console\Commands\GetLogs;
+use LaravelApiLogger\Console\Commands\ClearLogs;
 
 class LaravelApiLoggerServiceProvider extends ServiceProvider
 {
@@ -18,6 +18,7 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
      * Register services.
      *
      * @return void
+     * @throws Exception
      */
     public function register()
     {

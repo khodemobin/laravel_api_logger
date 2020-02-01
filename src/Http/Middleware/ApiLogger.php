@@ -1,9 +1,9 @@
 <?php
 
-namespace KhodeMobin\LaravelApiLogger\Http\Middleware;
+namespace LaravelApiLogger\Http\Middleware;
 
 use Closure;
-use KhodeMobin\LaravelApiLogger\Contracts\ApiLoggerInterface;
+use LaravelApiLogger\Contracts\ApiLoggerInterface;
 
 class ApiLogger
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace KhodeMobin\LaravelApiLogger\Console\Commands;
+namespace LaravelApiLogger\Console\Commands;
 
 use Illuminate\Console\Command;
-use KhodeMobin\LaravelApiLogger\Contracts\ApiLoggerInterface;
+use LaravelApiLogger\Contracts\ApiLoggerInterface;
 
 class GetLogs extends Command
 {
