@@ -74,7 +74,6 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ApiLoggerInterface::class, $instance);
-
         $this->app->singleton('apilogger', function ($app) use ($instance) {
             return new ApiLogger($app->make($instance));
         });
