@@ -51,10 +51,7 @@
                                     <button
                                         class="btn btn-{{$log->method=="GET"? "primary" : "success"}} font-weight-bold">{{$log->method}}</button>
                                 @endif
-
-                                <small class="col-md-2">
-                                    <b>{{$log->response}}</b>
-                                </small>
+                                
                             </span>
                             <large class="col-md-3"><b>Duration : </b>{{$log->duration * 1000}}ms</large>
                             <large class="col-md-3"><b>Date : </b>{{$log->created_at}}</large>

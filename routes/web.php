@@ -13,3 +13,4 @@
 
 
 Route::get('/apilogs', 'LaravelApiLogger\Http\Controllers\ApiLogController@index')->name("apilogs.index");
+Route::delete('/apilogs/delete', 'LaravelApiLogger\Http\Controllers\ApiLogController@deleteAll')->name("apilogs.deletelogs");

@@ -19,6 +19,7 @@ class ApiLogController
 
     public function deleteAll()
     {
-
+        ApiLog::query()->truncate();
+        return redirect(route('apilogs.index'));
     }
 }
