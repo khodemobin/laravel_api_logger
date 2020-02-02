@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +13,7 @@
 |
 */
 
-
-Route::get('/apilogs', 'LaravelApiLogger\Http\Controllers\ApiLogController@index')->name("apilogs.index");
-Route::delete('/apilogs/delete', 'LaravelApiLogger\Http\Controllers\ApiLogController@deleteAll')->name("apilogs.deletelogs");
+Route::middleware(config('apilog.connection'))->group(function () {
+    Route::get('/apilogs', 'LaravelApiLogger\Http\Controllers\ApiLogController@index')->name("apilogs.index");
+    Route::delete('/apilogs/delete', 'LaravelApiLogger\Http\Controllers\ApiLogController@deleteAll')->name("apilogs.deletelogs");
+});

@@ -1,5 +1,8 @@
 <?php
+
 namespace LaravelApiLogger\Drivers;
+
+require __DIR__ . './../../vendor/autoload.php';
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -89,19 +92,19 @@ abstract class BaseLoggerAbstract
         $this->logs['ip'] = $request->ip();
         $this->logs['real_ip'] = $this->getIp();
         $this->logs['log'] = json_encode($this->createRequestLog());
-//        try {
-//            $provider = new WhichBrowser();
-//            $result = $provider->parse($request->header('User-Agent'));
-//            $this->logs['device'] = $result->getDevice()->getBrand() == null ? "" : $result->getDevice()->getModel() . "-" . $result->getDevice()->getModel() == null ? "" : $result->getDevice()->getModel();
-//            $this->logs['platform_version'] = $result->getOperatingSystem()->getVersion()->getComplete();
-//            $this->logs['platform'] = $result->getOperatingSystem()->getName();
-//            $this->logs['browser'] = $result->getBrowser()->getName();
-//            $this->logs['browser_version'] = $result->getBrowser()->getVersion()->getComplete();
-//
-//            $result->getRenderingEngine()->getName();
-//        } catch (NoResultFoundException $ex) {
-//            // nothing found
-//        }
+        try {
+            $provider = new WhichBrowser();
+            $result = $provider->parse($request->header('User-Agent'));
+            $this->logs['device'] = $result->getDevice()->getBrand() == null ? "" : $result->getDevice()->getModel() . "-" . $result->getDevice()->getModel() == null ? "" : $result->getDevice()->getModel();
+            $this->logs['platform_version'] = $result->getOperatingSystem()->getVersion()->getComplete();
+            $this->logs['platform'] = $result->getOperatingSystem()->getName();
+            $this->logs['browser'] = $result->getBrowser()->getName();
+            $this->logs['browser_version'] = $result->getBrowser()->getVersion()->getComplete();
+
+            $result->getRenderingEngine()->getName();
+        } catch (NoResultFoundException $ex) {
+            // nothing found
+        }
 
         return $this->logs;
     }
