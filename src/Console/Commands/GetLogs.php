@@ -4,6 +4,7 @@ namespace LaravelApiLogger\Console\Commands;
 
 use Illuminate\Console\Command;
 use LaravelApiLogger\Contracts\ApiLoggerInterface;
+use LaravelApiLogger\Models\ApiLog;
 
 class GetLogs extends Command
 {
@@ -12,7 +13,7 @@ class GetLogs extends Command
      *
      * @var string
      */
-    protected $signature = 'apilog:clear';
+    protected $signature = 'apilog:get';
 
     /**
      * The console command description.
@@ -38,8 +39,8 @@ class GetLogs extends Command
      */
     public function handle(ApiLoggerInterface $apiLogger)
     {
-        $apiLogger->deleteAll();
+        $headers = ['id', 'i[', 'url', 'method', 'duration', 'created_at'];
 
-        $this->info("All records are deleted");
+        $this->table([], ApiLog::select('id', 'ip', 'url', 'method', 'duration', 'created_at')->get());
     }
 }

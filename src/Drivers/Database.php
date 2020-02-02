@@ -30,7 +30,7 @@ class Database extends BaseLoggerAbstract implements ApiLoggerInterface
      * return all models
      * @return array
      */
-    public function get(): array
+    public function get()
     {
         return $this->logger->all();
     }
