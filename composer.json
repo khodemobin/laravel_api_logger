@@ -11,7 +11,8 @@
     "require": {
         "php": ">=7.0",
         "whichbrowser/parser": "^2.0",
-        "thadafinser/user-agent-parser": "^2.0"
+        "thadafinser/user-agent-parser": "^2.0",
+        "illuminate/queue": "^7.10"
     },
     "autoload": {
         "psr-4": {

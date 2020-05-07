@@ -84,7 +84,7 @@ abstract class BaseLoggerAbstract
         $this->logs['method'] = $request->method();
         $this->logs['url'] = $request->path();
         $this->logs['payload'] = json_encode($request->all());
-        $this->logs['response'] = $response;
+        $this->logs['response'] = json_encode($response);
         $this->logs['duration'] = number_format($endTime - LARAVEL_START, 3);
         $this->logs['controller'] = $controller;
         $this->logs['action'] = $action;

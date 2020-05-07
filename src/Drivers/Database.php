@@ -9,39 +9,22 @@ use UserAgentParser\Exception\PackageNotLoadedException;
 class Database extends BaseLoggerAbstract implements ApiLoggerInterface
 {
 
-    /**
-     * Model for saving logs
-     *
-     * @var [type]
-     */
     protected $logger;
 
-    /**
-     * Database constructor.
-     * @param ApiLog $logger
-     */
     public function __construct(ApiLog $logger)
     {
         parent::__construct();
         $this->logger = $logger;
     }
 
-    /**
-     * return all models
-     * @return array
-     */
-    public function get()
+
+    public function get(): array
     {
-        return $this->logger->all();
+        return $this->logger::query()->latest()->get();
     }
 
-    /**
-     * save logs in database
-     * @param $request
-     * @param $response
-     * @throws PackageNotLoadedException
-     */
-    public function save($request, $response)
+
+    public function save($request, $response): void
     {
         $data = $this->logData($request, $response);
 
@@ -50,19 +33,12 @@ class Database extends BaseLoggerAbstract implements ApiLoggerInterface
         $this->logger->save();
     }
 
-    /**
-     * delete all logs
-     * @param $id
-     */
-    public function delete($id)
+    public function delete($id): void
     {
-        $log = ApiLog::find($id);
-        if ($log) {
-            $log->delete();
-        }
+        ApiLog::query()->where('id', $id)->delete();
     }
 
-    public function deleteAll()
+    public function deleteAll(): void
     {
         $this->logger->truncate();
     }

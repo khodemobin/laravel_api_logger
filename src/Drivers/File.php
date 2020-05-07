@@ -23,31 +23,29 @@ class File extends BaseLoggerAbstract implements ApiLoggerInterface
     /**
      * read files from log directory
      *
-     * @return array
+     * @return array|\Illuminate\Support\Collection
      */
     public function get()
     {
         //check if the directory exists
         if (is_dir($this->path)) {
-            //scann the directory
+            //scan the directory
             $files = scandir($this->path);
-
             $contentCollection = [];
-
             //loop each files
             foreach ($files as $file) {
                 if (!is_dir($file)) {
                     $lines = file($this->path . DIRECTORY_SEPARATOR . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                     foreach ($lines as $line) {
                         $contentarr = explode(";", $line);
-                        array_push($contentCollection, $this->mapArrayToModel($contentarr));
+                        $contentCollection[] = $this->mapArrayToModel($contentarr);
                     }
                 }
             }
             return collect($contentCollection);
-        } else {
-            return [];
         }
+
+        return [];
     }
 
     /**
@@ -56,11 +54,11 @@ class File extends BaseLoggerAbstract implements ApiLoggerInterface
      * @param [type] $request
      * @param [type] $response
      * @return void
+     * @throws \UserAgentParser\Exception\PackageNotLoadedException
      */
     public function save($request, $response)
     {
         $data = $this->logData($request, $response);
-
         $filename = $this->getLogFilename();
 
         $contents = implode(";", $data);
@@ -79,7 +77,7 @@ class File extends BaseLoggerAbstract implements ApiLoggerInterface
     public function getLogFilename()
     {
         // original default filename
-        $filename = 'apilogger-' . date('d-m-Y') . '.log';
+        $filename = date('Y-m-d') . '.log';
 
         $configFilename = config('apilog.filename');
         preg_match('/{(.*?)}/', $configFilename, $matches, PREG_OFFSET_CAPTURE);
@@ -88,6 +86,12 @@ class File extends BaseLoggerAbstract implements ApiLoggerInterface
         }
         return $filename;
     }
+
+    public function delete($id)
+    {
+
+    }
+
 
     /**
      * delete all api log  files
@@ -99,10 +103,5 @@ class File extends BaseLoggerAbstract implements ApiLoggerInterface
         if (is_dir($this->path)) {
             FileFacade::deleteDirectory($this->path);
         }
-    }
-
-
-    public function delete()
-    {
     }
 }

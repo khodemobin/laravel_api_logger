@@ -5,6 +5,7 @@ namespace LaravelApiLogger\Providers;
 use Exception;
 use Illuminate\Support\ServiceProvider;
 use LaravelApiLogger\Drivers\Database;
+use LaravelApiLogger\Drivers\File;
 use LaravelApiLogger\Http\Middleware\ApiLogger;
 use LaravelApiLogger\Contracts\ApiLoggerInterface;
 use LaravelApiLogger\Console\Commands\GetLogs;
@@ -18,7 +19,7 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
      * @return void
      * @throws Exception
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/apilog.php',
@@ -32,7 +33,7 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->loadConfig();
         $this->loadRoutes();
@@ -53,21 +54,18 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
         }
     }
 
-    public function bindServices()
+    public function bindServices(): void
     {
         $driver = config('apilog.driver');
-        $instance = "";
         switch ($driver) {
-                // case 'file':
-                //     $instance = File::class;
-                //     break;
+            case 'file':
+                $instance = File::class;
+                break;
             case 'database':
                 $instance = Database::class;
                 break;
-                // case "redis":
-                //     $instance = Redis::class;
             default:
-                throw new Exception("Unsupported Driver");
+                throw new \RuntimeException("Unsupported Driver");
                 break;
         }
 
@@ -78,7 +76,7 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
     }
 
 
-    public function loadConfig()
+    public function loadConfig(): void
     {
         $this->publishes([
             __DIR__ . '/../../config/apilog.php' => config_path('apilog.php')
@@ -86,17 +84,17 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
     }
 
 
-    public function loadRoutes()
+    public function loadRoutes(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
     }
 
-    public function loadViews()
+    public function loadViews(): void
     {
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'apilog');
     }
 
-    public function loadCommand()
+    public function loadCommand(): void
     {
         $this->commands([
             ClearLogs::class,
@@ -104,7 +102,7 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
         ]);
     }
 
-    public function loadMigrations()
+    public function loadMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
     }
