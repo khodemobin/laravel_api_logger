@@ -2,141 +2,68 @@
 
 namespace LaravelApiLogger\Drivers;
 
-require __DIR__ . './../../vendor/autoload.php';
-
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
-use LaravelApiLogger\Models\ApiLog;
-use UserAgentParser\Exception\NoResultFoundException;
-use UserAgentParser\Exception\PackageNotLoadedException;
-use UserAgentParser\Provider\WhichBrowser;
-
+use Jenssegers\Agent\Agent;
+use LaravelApiLogger\Contracts\Log;
 
 abstract class BaseLoggerAbstract
 {
-
-    protected $logs = [];
-
-    protected $models = [];
-
-    public function __construct()
-    {
-        $this->boot();
-    }
-    /**
-     * starting method just for cleaning code
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        Event::listen('eloquent.*', function ($event, $models) {
-            if (Str::contains($event, 'eloquent.retrieved')) {
-                foreach (array_filter($models) as $model) {
-                    $class = get_class($model);
-                    $this->models[$class] = ($this->models[$class] ?? 0) + 1;
-                }
-            }
-        });
-    }
+    protected array $logs = [];
 
     /**
      * logs into associative array
      *
-     * @param  $request
+     * @param Request $request
      * @param  $response
-     * @return array
-     * @throws PackageNotLoadedException
+     * @return Log|null
+     * @throws \JsonException
      */
-    public function logData(Request $request, $response)
+    public function generateLog(Request $request, $response): ?Log
     {
         $currentRouteAction = Route::currentRouteAction();
 
-        // Initialiaze controller and action variable before use them
         $controller = "";
         $action = "";
 
-        /*
-         * Some routes will not contain the `@` symbole (e.g. closures, or routes using a single action controller).
-         */
         if ($currentRouteAction) {
-            if (strpos($currentRouteAction, '@') !== false) {
-                list($controller, $action) = explode('@', $currentRouteAction);
+            if (str_contains($currentRouteAction, '@')) {
+                [$controller, $action] = explode('@', $currentRouteAction);
+            } else if (is_string($currentRouteAction)) {
+                [$controller, $action] = ["", $currentRouteAction];
             } else {
-                // If we get a string, just use that.
-                if (is_string($currentRouteAction)) {
-                    list($controller, $action) = ["", $currentRouteAction];
-                } else {
-                    // Otherwise force it to be some type of string using `json_encode`.
-                    list($controller, $action) = ["", (string) json_encode($currentRouteAction)];
-                }
+                // Otherwise force it to be some type of string using `json_encode`.
+                [$controller, $action] = ["", (string)json_encode($currentRouteAction, JSON_THROW_ON_ERROR)];
             }
         }
 
+
         $endTime = microtime(true);
-
-        $implode_models = $this->models;
-        $models = implode(', ', $implode_models);
-        $this->logs['created_at'] = Carbon::now();
-        $this->logs['method'] = $request->method();
-        $this->logs['url'] = $request->path();
-        $this->logs['payload'] = json_encode($request->all());
-        $this->logs['response'] = json_encode($response);
-        $this->logs['duration'] = number_format($endTime - LARAVEL_START, 3);
-        $this->logs['controller'] = $controller;
-        $this->logs['action'] = $action;
-        $this->logs['models'] = $models;
-        $this->logs['ip'] = $request->ip();
-        $this->logs['real_ip'] = $this->getIp();
-        $this->logs['log'] = json_encode($this->createRequestLog());
+        $agent = new Agent();
+        $agent->setHttpHeaders($request->header('User-Agent'));
         try {
-            $provider = new WhichBrowser();
-            $result = $provider->parse($request->header('User-Agent'));
-            $this->logs['device'] = $result->getDevice()->getBrand() == null ? "" : $result->getDevice()->getModel() . "-" . $result->getDevice()->getModel() == null ? "" : $result->getDevice()->getModel();
-            $this->logs['platform_version'] = $result->getOperatingSystem()->getVersion()->getComplete();
-            $this->logs['platform'] = $result->getOperatingSystem()->getName();
-            $this->logs['browser'] = $result->getBrowser()->getName();
-            $this->logs['browser_version'] = $result->getBrowser()->getVersion()->getComplete();
-
-            $result->getRenderingEngine()->getName();
-        } catch (NoResultFoundException $ex) {
-            // nothing found
+            return new Log(
+                created_at: now(),
+                method: $request->method(),
+                controller: $controller,
+                action: $action,
+                url: $request->path(),
+                payload: json_encode($request->all(), JSON_THROW_ON_ERROR),
+                response: json_encode($response, JSON_THROW_ON_ERROR),
+                duration: number_format($endTime - LARAVEL_START, 3),
+                ip: $request->ip(),
+                realIP: $this->getIp(),
+                device: $agent->device(),
+                platform: $agent->platform(),
+                platformVersion: $agent->version($agent->platform()),
+                browser: $agent->browser(),
+                browserVersion: $agent->version($agent->browser())
+            );
+        } catch (Exception) {
+            return null;
         }
-
-        return $this->logs;
     }
-    /**
-     * Helper method for mapping array into models
-     *
-     * @param array $data
-     * @return ApiLog
-     */
-    public function mapArrayToModel(array $data)
-    {
-        $model = new ApiLog();
-        $model->created_at = Carbon::make($data[0]);
-        $model->method = $data[1];
-        $model->url = $data[2];
-        $model->payload = $data[3];
-        $model->response = $data[4];
-        $model->duration = $data[5];
-        $model->controller = $data[6];
-        $model->action = $data[7];
-        $model->models = $data[8];
-        $model->ip = $data[9];
-        $model->real_ip = $data[10];
-        $model->device = $data[11];
-        $model->platform = $data[12];
-        $model->platform_version = $data[13];
-        $model->browser = $data[14];
-        $model->browser_version = $data[15];
-        $model->log = $data[16];
-        return $model;
-    }
-
 
     /**
      * get clint real ip
@@ -156,20 +83,5 @@ abstract class BaseLoggerAbstract
             }
         }
         return "";
-    }
-
-    private function createRequestLog()
-    {
-        $get_first = function ($x) {
-            return $x[0];
-        };
-        // Same as getallheaders(), just with lowercase keys
-
-        $body = request()->all();
-        $headers = array_map($get_first, request()->headers->all());
-        return [
-            'body' => $body,
-            'headers' => $headers
-        ];
     }
 }

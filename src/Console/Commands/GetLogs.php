@@ -41,6 +41,6 @@ class GetLogs extends Command
     {
         $headers = ['id', 'i[', 'url', 'method', 'duration', 'created_at'];
 
-        $this->table([], ApiLog::select('id', 'ip', 'url', 'method', 'duration', 'created_at')->get());
+        $this->table([], ApiLog::query()->select('id', 'ip', 'url', 'method', 'duration', 'created_at')->get());
     }
 }

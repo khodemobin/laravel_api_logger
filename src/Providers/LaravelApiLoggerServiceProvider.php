@@ -21,10 +21,6 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/apilog.php',
-            'apilog'
-        );
         $this->bindServices();
     }
 
@@ -35,75 +31,33 @@ class LaravelApiLoggerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadConfig();
-        $this->loadRoutes();
-        $this->loadViews();
-        $this->loadCommand();
-        $this->loadMigrations();
+        $this->commands([
+            ClearLogs::class,
+            GetLogs::class
+        ]);
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../../config/apilog.php' => config_path('apilog.php'),
-            ], 'config');
-        }
+        $this->publishes([
+            __DIR__ . '/../../config/apilog.php' => config_path('apilog.php')
+        ], 'config');
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../../database/migrations/' => database_path('migrations'),
-            ], 'migrations');
-        }
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'apilog');
+        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
     }
 
     public function bindServices(): void
     {
         $driver = config('apilog.driver');
-        switch ($driver) {
-            case 'file':
-                $instance = File::class;
-                break;
-            case 'database':
-                $instance = Database::class;
-                break;
-            default:
-                throw new \RuntimeException("Unsupported Driver");
-                break;
-        }
+
+        $instance = match ($driver) {
+            'file' => File::class,
+            'database' => Database::class,
+            default => throw new \RuntimeException("Unsupported Driver"),
+        };
 
         $this->app->singleton(ApiLoggerInterface::class, $instance);
         $this->app->singleton('apilogger', function ($app) use ($instance) {
             return new ApiLogger($app->make($instance));
         });
-    }
-
-
-    public function loadConfig(): void
-    {
-        $this->publishes([
-            __DIR__ . '/../../config/apilog.php' => config_path('apilog.php')
-        ], 'config');
-    }
-
-
-    public function loadRoutes(): void
-    {
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
-    }
-
-    public function loadViews(): void
-    {
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'apilog');
-    }
-
-    public function loadCommand(): void
-    {
-        $this->commands([
-            ClearLogs::class,
-            GetLogs::class
-        ]);
-    }
-
-    public function loadMigrations(): void
-    {
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
     }
 }

@@ -9,10 +9,9 @@
         "email": "mobinyazdanparast9@gmail.com"
     }],
     "require": {
-        "php": ">=7.0",
-        "whichbrowser/parser": "^2.0",
-        "thadafinser/user-agent-parser": "^2.0",
-        "illuminate/queue": "^7.10"
+        "php": "^8.0|^7.3",
+        "jenssegers/agent": "dev-master",
+        "laravel/framework": "^8.39"
     },
     "autoload": {
         "psr-4": {

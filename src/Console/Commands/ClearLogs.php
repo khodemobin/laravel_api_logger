@@ -34,6 +34,7 @@ class ClearLogs extends Command
     /**
      * Execute the console command.
      *
+     * @param ApiLoggerInterface $apiLogger
      * @return mixed
      */
     public function handle(ApiLoggerInterface $apiLogger)
